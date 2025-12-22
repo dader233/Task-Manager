@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker MVP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="display-5 mb-0">📋 Task Tracker</h1>
+                    <div>
+                        {% if user.is_authenticated %}
+                            <span class="badge bg-primary fs-6 me-2">👤 {{ user.username }}</span>
+                            <a href="/admin/password_change/" class="btn btn-sm btn-outline-secondary me-2">🔐</a>
+                            <a href="/admin/logout/?next=/admin/login/" class="btn btn-sm btn-outline-danger">Выйти</a>
+                        {% else %}
+                            <a href="/admin/login/?next=/tasks/" class="btn btn-primary">🔐 Войти</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <div class="d-flex gap-2 mb-4">
+                        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#taskModal">
+                            ➕ Новая задача
+                        </button>
+                        <a href="/admin/" class="btn btn-outline-secondary">⚙️ Админка</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3>Мои задачи ({{ tasks.count }})</h3>
+                        {% if tasks %}
+                            <span class="badge bg-success fs-6">{{ tasks.count }} задач</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if tasks %}
+                        <div class="table-responsive shadow-sm rounded">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="45%">Название</th>
+                                        <th width="12%">Статус</th>
+                                        <th width="12%">Приоритет</th>
+                                        <th width="16%">Дата создания</th>
+                                        <th width="15%" class="text-center">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in tasks %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ task.title|truncatechars:50 }}</strong>
+                                            {% if task.description %}
+                                                <br><small class="text-muted">{{ task.description|truncatechars:80 }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.status == 'new' %}
+                                                <span class="badge bg-secondary fs-6">🆕 Новая</span>
+                                            {% elif task.status == 'in_progress' %}
+                                                <span class="badge bg-warning text-dark fs-6">⚙️ В работе</span>
+                                            {% elif task.status == 'completed' %}
+                                                <span class="badge bg-success fs-6">✅ Завершена</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.priority == 'low' %}
+                                                <span class="badge bg-success fs-6">🟢 Низкий</span>
+                                            {% elif task.priority == 'medium' %}
+                                                <span class="badge bg-warning text-dark fs-6">🟡 Средний</span>
+                                            {% elif task.priority == 'high' %}
+                                                <span class="badge bg-danger fs-6">🔴 Высокий</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ task.created_at|date:"d.m" }}<br>
+                                                {{ task.created_at|time:"H:i" }}
+                                            </small>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'task_detail' task.id %}" class="btn btn-outline-info" title="Подробнее">
+                                                    👁️
+                                                </a>
+                                                <a href="{% url 'task_update' task.id %}" class="btn btn-outline-primary" title="Редактировать">
+                                                    ✏️
+                                                </a>
+                                                <form method="post" action="{% url 'task_delete' task.id %}" class="d-inline" style="margin: 0;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-danger" title="Удалить" 
+                                                            onclick="return confirm('Удалить задачу «{{ task.title|escape }}»?')">
+                                                        🗑️
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center py-5 shadow-sm">
+                            <div class="display-4 mb-3">🎯</div>
+                            <h4>Нет задач</h4>
+                            <p class="mb-4">Начни с создания первой задачи!</p>
+                            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#taskModal">
+                                ➕ Создать первую задачу
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center py-5 shadow-sm">
+                <div class="display-4 mb-3">🔐</div>
+                <h4>Авторизация требуется</h4>
+                <p class="mb-4">Войди через <a href="/admin/login/?next=/tasks/">админку</a> чтобы увидеть свои задачи</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal создания задачи -->
+    {% if user.is_authenticated %}
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="post" action="{% url 'task_create' %}">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="taskModalLabel">➕ Новая задача</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Название задачи <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" required 
+                                   placeholder="Например: Написать код для Task Tracker">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Описание</label>
+                            <textarea name="description" class="form-control" rows="3" 
+                                      placeholder="Подробное описание задачи..."></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Приоритет</label>
+                                <select name="priority" class="form-select">
+                                    <option value="low">🟢 Низкий</option>
+                                    <option value="medium" selected>🟡 Средний</option>
+                                    <option value="high">🔴 Высокий</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Статус</label>
+                                <select name="status" class="form-select">
+                                    <option value="new" selected>🆕 Новая</option>
+                                    <option value="in_progress">⚙️ В работе</option>
+                                    <option value="completed">✅ Завершена</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">
+                            ✅ Создать задачу
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
