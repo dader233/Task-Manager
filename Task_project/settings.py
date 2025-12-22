@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Task_project',
     'django.contrib.postgres',
+    'Task_project',
     'tasks',
 ]
 
