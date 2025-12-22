@@ -1,0 +1,36 @@
+services:
+  django:
+    build: .
+    container_name: django
+    command: sh -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - 8000:8000
+    depends_on:
+      pgdb:
+        condition: service_healthy
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  pgdb:
+    image: postgres:15-alpine
+    container_name: pgdb
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  # ИСПРАВЛЕН формат
+  pgdbdata:
