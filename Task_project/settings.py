@@ -28,7 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
-# Application definition
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = 'task_list'  
+LOGOUT_REDIRECT_URL = 'landing'   
+LOGIN_URL = 'login'               
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'Task_project',
     'tasks',
+    'accounts',
 ]
 
 MIDDLEWARE = [

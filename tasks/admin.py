@@ -1,8 +1,6 @@
 # Импорт модуля admin из библиотеки Django.contrib
 from django.contrib import admin
 # Импорт модели MyModel из текущего каталога (".")
-from .models import Task, MyModel
-# Регистрация модели MyModel для административного сайта
-admin.site.register(MyModel)
+from .models import Task
 
 admin.site.register(Task)

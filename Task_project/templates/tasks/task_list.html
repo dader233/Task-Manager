@@ -16,9 +16,15 @@
                         {% if user.is_authenticated %}
                             <span class="badge bg-primary fs-6 me-2">👤 {{ user.username }}</span>
                             <a href="/admin/password_change/" class="btn btn-sm btn-outline-secondary me-2">🔐</a>
-                            <a href="/admin/logout/?next=/admin/login/" class="btn btn-sm btn-outline-danger">Выйти</a>
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        onclick="return confirm('Выйти из аккаунта?')">
+                                    Выйти
+                                </button>
+                            </form>
                         {% else %}
-                            <a href="/admin/login/?next=/tasks/" class="btn btn-primary">🔐 Войти</a>
+                            <a href="{% url 'login' %}?next={% url 'task_list' %}" class="btn btn-primary">🔐 Войти</a>
                         {% endif %}
                     </div>
                 </div>
@@ -28,7 +34,9 @@
                         <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#taskModal">
                             ➕ Новая задача
                         </button>
-                        <a href="/admin/" class="btn btn-outline-secondary">⚙️ Админка</a>
+                        {% if user.is_staff %}
+                            <a href="/admin/" class="btn btn-outline-secondary">⚙️ Админка</a>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>
@@ -127,7 +135,10 @@
             <div class="alert alert-warning text-center py-5 shadow-sm">
                 <div class="display-4 mb-3">🔐</div>
                 <h4>Авторизация требуется</h4>
-                <p class="mb-4">Войди через <a href="/admin/login/?next=/tasks/">админку</a> чтобы увидеть свои задачи</p>
+                <p class="mb-4">
+                    <a href="{% url 'login' %}?next={% url 'task_list' %}" class="btn btn-primary me-2">🔐 Войти</a>
+                    или <a href="{% url 'register' %}">зарегистрироваться</a>
+                </p>
             </div>
         {% endif %}
     </div>

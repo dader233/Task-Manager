@@ -1,14 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-class MyModel(models.Model):
-    # Определение поля id типа AutoField как первичного ключа
-    id = models.AutoField(primary_key=True)
-    # Определение поля phone типа CharField с максимальной длиной в 20 символов
-    phone = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.phone
     
 class Task(models.Model):
     

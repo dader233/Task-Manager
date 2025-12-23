@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Task Tracker 🚀{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0 min-vh-100 bg-gradient landing-hero">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <!-- Left: Text + Buttons -->
+            <div class="col-lg-6 text-white">
+                <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeIn">
+                    📝 Task Tracker
+                </h1>
+                <p class="lead mb-4 animate__animated animate__fadeIn animate__delay-1s">
+                    Управляй задачами как профи!<br>
+                    <small class="text-white-50">Django + PostgreSQL + Full CRUD</small>
+                </p>
+                
+                {% if user.is_authenticated %}
+                    <div class="d-flex flex-column flex-md-row gap-3 animate__animated animate__fadeIn animate__delay-2s">
+                        <a href="{% url 'task_list' %}" class="btn btn-light btn-lg px-5 py-3 mb-2 mb-md-0">
+                            <i class="bi bi-list-task me-2"></i>Перейти к задачам
+                        </a>
+                        
+                        <!-- ВАЖНО: Выход через POST форму -->
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-light btn-lg px-5 py-3">
+                                <i class="bi bi-box-arrow-right me-2"></i>Выход
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="mt-4 animate__animated animate__fadeIn animate__delay-3s">
+                        <div class="card bg-dark bg-opacity-50 text-white border-0">
+                            <div class="card-body">
+                                <h5><i class="bi bi-person-circle me-2"></i>Ваш профиль</h5>
+                                <p class="mb-1">Пользователь: <strong>{{ user.username }}</strong></p>
+                                <p class="mb-1">Имя: <strong>{{ user.first_name|default:"Не указано" }}</strong></p>
+                                <p class="mb-0">Email: <strong>{{ user.email|default:"Не указан" }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="d-flex flex-column flex-md-row gap-3 animate__animated animate__fadeIn animate__delay-2s">
+                        <a href="{% url 'login' %}" class="btn btn-light btn-lg px-5 py-3 mb-2 mb-md-0">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                            <i class="bi bi-person-plus me-2"></i>Регистрация
+                        </a>
+                    </div>
+                    
+                    <div class="mt-4 animate__animated animate__fadeIn animate__delay-3s">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card bg-dark bg-opacity-50 text-white border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-lightning-charge display-6 mb-3"></i>
+                                        <h5>Быстро</h5>
+                                        <p class="small">Создавайте задачи за секунды</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark bg-opacity-50 text-white border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-shield-check display-6 mb-3"></i>
+                                        <h5>Надежно</h5>
+                                        <p class="small">Ваши данные в безопасности</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark bg-opacity-50 text-white border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-graph-up display-6 mb-3"></i>
+                                        <h5>Удобно</h5>
+                                        <p class="small">Анализируйте свою продуктивность</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Right: Image -->
+            <div class="col-lg-6 text-center animate__animated animate__fadeIn animate__delay-1s">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=500&fit=crop" 
+                         class="img-fluid rounded shadow-lg" alt="Task Management">
+                    <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-dark bg-opacity-75 rounded-bottom">
+                        <p class="text-white mb-0">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            Более 1000 пользователей уже управляют задачами с нами
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
