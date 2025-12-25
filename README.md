@@ -1,4 +1,4 @@
-<img width="1142" height="1272" alt="{CA12CC08-C3FC-4CBB-9431-B6858F9D6369}" src="https://github.com/user-attachments/assets/312dd071-17bd-4244-8d85-8df2f2f5c0ae" /># Планировщик задач Task-Manager на основе Python, Django, PostgreSQL
+# Планировщик задач Task-Manager на основе Python, Django, PostgreSQL
 
 Этот проект представляет собой простое веб-приложение для отслеживания статуса выполнения задач, взаимодействия с БД, и менеджерингом задач со стороны Администратора.
 
