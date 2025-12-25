@@ -36,4 +36,6 @@
 ![TASKS-PAGE](images/tasks-page.png)
 ### Создание таски(задачи)
 ![TASK-CREATE](images/create-task.png)
+
+  
 _Примечание: Frontend часть (HTML/CSS шаблоны) разработана с использованием AI-ассистентов и Bootstrap._
